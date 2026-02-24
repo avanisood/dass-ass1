@@ -424,7 +424,23 @@ const EventDetail = () => {
                 <Typography variant="caption" sx={{ fontFamily: '"Space Mono", monospace', color: '#3D3D3D', display: 'block', marginBottom: 0.5 }}>
                   ORGANIZER
                 </Typography>
-                <Typography variant="body2" sx={{ fontFamily: '"Karla", sans-serif', color: '#2C2C2C', fontWeight: 600 }}>
+                <Typography
+                  variant="body2"
+                  onClick={() => {
+                    if (event.organizerId?._id) {
+                      navigate(`/participant/organizers/${event.organizerId._id}`);
+                    }
+                  }}
+                  sx={{
+                    fontFamily: '"Karla", sans-serif',
+                    color: event.organizerId?._id ? '#6B9BC3' : '#2C2C2C',
+                    fontWeight: 600,
+                    cursor: event.organizerId?._id ? 'pointer' : 'default',
+                    '&:hover': {
+                      textDecoration: event.organizerId?._id ? 'underline' : 'none'
+                    }
+                  }}
+                >
                   {event.organizerId?.organizerName || 'Unknown'}
                 </Typography>
               </Box>

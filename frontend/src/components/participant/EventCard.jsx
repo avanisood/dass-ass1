@@ -71,7 +71,7 @@ const EventCard = ({ event }) => {
             }
           }}
         />
-        
+
         {/* Window Controls */}
         <Box className="window-controls"></Box>
       </Box>
@@ -101,11 +101,21 @@ const EventCard = ({ event }) => {
         {/* Organizer */}
         <Typography
           variant="body2"
+          onClick={(e) => {
+            if (event.organizerId?._id) {
+              e.stopPropagation();
+              navigate(`/participant/organizers/${event.organizerId._id}`);
+            }
+          }}
           sx={{
             fontStyle: 'italic',
-            color: 'text.secondary',
+            color: event.organizerId?._id ? '#6B9BC3' : 'text.secondary',
             marginBottom: '1rem',
             fontFamily: '"Karla", sans-serif',
+            cursor: event.organizerId?._id ? 'pointer' : 'default',
+            '&:hover': {
+              textDecoration: event.organizerId?._id ? 'underline' : 'none'
+            }
           }}
         >
           hosted by {event.organizerId?.organizerName || 'Unknown Organizer'}

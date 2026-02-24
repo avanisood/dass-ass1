@@ -470,13 +470,23 @@ const Dashboard = () => {
 
                           {/* Organizer */}
                           <Typography
-                            variant="caption"
+                            variant="body2"
+                            onClick={(e) => {
+                              if (registration.eventId?.organizerId?._id) {
+                                e.stopPropagation();
+                                navigate(`/participant/organizers/${registration.eventId.organizerId._id}`);
+                              }
+                            }}
                             sx={{
                               fontFamily: '"Karla", sans-serif',
-                              color: '#3D3D3D',
+                              color: registration.eventId?.organizerId?._id ? '#6B9BC3' : '#3D3D3D',
                               display: 'block',
                               marginBottom: 1,
-                              fontStyle: 'italic'
+                              fontStyle: 'italic',
+                              cursor: registration.eventId?.organizerId?._id ? 'pointer' : 'default',
+                              '&:hover': {
+                                textDecoration: registration.eventId?.organizerId?._id ? 'underline' : 'none'
+                              }
                             }}
                           >
                             by {registration.eventId?.organizerId?.organizerName || 'Unknown'}
