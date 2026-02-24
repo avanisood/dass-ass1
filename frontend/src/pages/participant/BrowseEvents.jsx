@@ -13,8 +13,11 @@ import {
   Checkbox,
   Button,
   InputAdornment,
+  Card,
+  CardContent,
+  Chip as MuiChip,
 } from '@mui/material';
-import { Search as SearchIcon } from '@mui/icons-material';
+import { Search as SearchIcon, Whatshot as WhatshotIcon } from '@mui/icons-material';
 
 // Browse Events Page Component
 const BrowseEvents = () => {
@@ -32,13 +35,27 @@ const BrowseEvents = () => {
 
   // State for events data
   const [events, setEvents] = useState([]);
+  const [trendingEvents, setTrendingEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
   // Fetch events when filters change
   useEffect(() => {
     fetchEvents();
+    fetchTrendingEvents();
   }, [search, filters]);
+
+  // Fetch trending events
+  const fetchTrendingEvents = async () => {
+    try {
+      const response = await api.get('/events/trending');
+      if (response.data.success) {
+        setTrendingEvents(response.data.events || []);
+      }
+    } catch (err) {
+      console.error('Error fetching trending events:', err);
+    }
+  };
 
   // Fetch events from API
   const fetchEvents = async () => {
@@ -71,7 +88,7 @@ const BrowseEvents = () => {
 
       // Call API to get events
       const response = await api.get(`/events?${params.toString()}`);
-      
+
       // Handle different response formats
       if (Array.isArray(response.data)) {
         setEvents(response.data);
@@ -145,9 +162,9 @@ const BrowseEvents = () => {
             <span className="sparkle" style={{ position: 'absolute', bottom: '1.5rem', left: '2rem' }}>✦</span>
             <span className="sparkle" style={{ position: 'absolute', top: '50%', right: '4rem' }}>✦</span>
 
-            <Typography 
-              variant="h3" 
-              sx={{ 
+            <Typography
+              variant="h3"
+              sx={{
                 fontFamily: '"Space Mono", monospace',
                 fontWeight: 700,
                 textTransform: 'uppercase',
@@ -157,9 +174,9 @@ const BrowseEvents = () => {
             >
               Browse Events
             </Typography>
-            <Typography 
-              variant="body1" 
-              sx={{ 
+            <Typography
+              variant="body1"
+              sx={{
                 fontFamily: '"Karla", sans-serif',
                 color: '#3D3D3D'
               }}
@@ -187,6 +204,50 @@ const BrowseEvents = () => {
             />
           </div>
         </Box>
+
+        {/* Trending Events Banner */}
+        {trendingEvents.length > 0 && !search && !filters.type && !filters.eligibility && (
+          <Box className="window-box" sx={{ marginBottom: 4 }}>
+            <div className="window-header" style={{ backgroundColor: '#C65D4F', color: 'white' }}>
+              <Typography sx={{ fontFamily: '"Space Mono", monospace', fontWeight: 700, fontSize: '0.875rem', display: 'flex', alignItems: 'center' }}>
+                <WhatshotIcon sx={{ mr: 1, fontSize: '1.2rem' }} /> TRENDING_EVENTS.EXE (Top 5 / 24H)
+              </Typography>
+            </div>
+            <div className="window-body" style={{ padding: '2rem' }}>
+              <Grid container spacing={2}>
+                {trendingEvents.map((event) => (
+                  <Grid item xs={12} sm={6} md={2.4} key={`trending-${event._id}`}>
+                    <Card
+                      onClick={() => handleEventClick(event._id)}
+                      sx={{
+                        cursor: 'pointer',
+                        height: '100%',
+                        border: '2px solid #E8C17C',
+                        transition: 'transform 0.2s',
+                        '&:hover': { transform: 'translateY(-4px)', boxShadow: '4px 4px 0px #E8C17C' }
+                      }}
+                    >
+                      <CardContent sx={{ p: 2, '&:last-child': { pb: 2 } }}>
+                        <WhatshotIcon sx={{ color: '#C65D4F', mb: 1 }} />
+                        <Typography variant="subtitle2" sx={{ fontWeight: 'bold', fontFamily: '"Karla", sans-serif', mb: 1, display: '-webkit-box', overflow: 'hidden', WebkitBoxOrient: 'vertical', WebkitLineClamp: 2 }}>
+                          {event.name}
+                        </Typography>
+                        <MuiChip
+                          label={event.type}
+                          size="small"
+                          sx={{ height: 20, fontSize: '0.65rem', mb: 1, backgroundColor: event.type === 'normal' ? '#6B9BC3' : '#E8C17C' }}
+                        />
+                        <Typography variant="caption" display="block" color="text.secondary">
+                          {event.trendingScore || 0} Registrations
+                        </Typography>
+                      </CardContent>
+                    </Card>
+                  </Grid>
+                ))}
+              </Grid>
+            </div>
+          </Box>
+        )}
 
         <Grid container spacing={3}>
           {/* Filter Sidebar */}
@@ -267,7 +328,7 @@ const BrowseEvents = () => {
                     />
                   }
                   label="Followed clubs only"
-                  sx={{ 
+                  sx={{
                     '& .MuiFormControlLabel-label': {
                       fontFamily: '"Karla", sans-serif',
                       fontSize: '0.875rem'
@@ -306,9 +367,9 @@ const BrowseEvents = () => {
                 {events.length === 0 ? (
                   <Box className="window-box">
                     <div className="window-body" style={{ textAlign: 'center', padding: '3rem' }}>
-                      <Typography 
-                        variant="h5" 
-                        sx={{ 
+                      <Typography
+                        variant="h5"
+                        sx={{
                           fontFamily: '"DM Serif Display", serif',
                           color: '#2C2C2C',
                           marginBottom: '1rem'
@@ -316,9 +377,9 @@ const BrowseEvents = () => {
                       >
                         No events found
                       </Typography>
-                      <Typography 
-                        variant="body1" 
-                        sx={{ 
+                      <Typography
+                        variant="body1"
+                        sx={{
                           fontFamily: '"Karla", sans-serif',
                           color: '#3D3D3D',
                           marginBottom: '2rem'

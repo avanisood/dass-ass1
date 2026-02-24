@@ -18,6 +18,8 @@ import BrowseEvents from './pages/participant/BrowseEvents';
 import ParticipantProfile from './pages/participant/Profile';
 import EventDetail from './pages/participant/EventDetail';
 import Onboarding from './pages/participant/Onboarding';
+import Clubs from './pages/participant/Clubs';
+import OrganizerDetail from './pages/participant/OrganizerDetail';
 
 // Organizer Pages
 import OrganizerDashboard from './pages/organizer/Dashboard';
@@ -87,6 +89,22 @@ function App() {
               element={
                 <ProtectedRoute allowedRoles={['participant']}>
                   <Onboarding />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/participant/clubs"
+              element={
+                <ProtectedRoute allowedRoles={['participant']}>
+                  <Clubs />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/participant/organizers/:id"
+              element={
+                <ProtectedRoute allowedRoles={['participant']}>
+                  <OrganizerDetail />
                 </ProtectedRoute>
               }
             />

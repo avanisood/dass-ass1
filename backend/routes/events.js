@@ -2,10 +2,14 @@ const express = require('express');
 const router = express.Router();
 const authenticate = require('../middleware/authenticate');
 const authorize = require('../middleware/authorize');
+const optionalAuthenticate = require('../middleware/optionalAuthenticate');
 const eventController = require('../controllers/eventController');
 
+// GET /api/events/trending - Get trending events (Top 5 in 24h) - Public access
+router.get('/trending', eventController.getTrendingEvents);
+
 // GET /api/events - Browse events (with filters, search) - Public access
-router.get('/', eventController.getEvents);
+router.get('/', optionalAuthenticate, eventController.getEvents);
 
 // GET /api/events/:id - Event details - Public access
 router.get('/:id', eventController.getEventById);

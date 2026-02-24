@@ -63,7 +63,9 @@ const Navbar = () => {
       case 'participant':
         return [
           { label: 'Dashboard', path: '/participant/dashboard', icon: <DashboardIcon /> },
-          { label: 'Browse Events', path: '/participant/events', icon: <EventIcon /> }
+          { label: 'Browse Events', path: '/participant/events', icon: <EventIcon /> },
+          { label: 'Clubs & Organizers', path: '/participant/clubs', icon: <PeopleIcon /> },
+          { label: 'Profile', path: '/participant/profile', icon: <PersonIcon /> }
         ];
 
       case 'organizer':

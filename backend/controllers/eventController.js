@@ -126,7 +126,18 @@ exports.getEvents = async (req, res) => {
     const query = {};
 
     if (search) {
-      query.$or = [{ name: { $regex: search, $options: 'i' } }];
+      // Find organizers matching the search query
+      const matchingOrganizers = await User.find({
+        role: 'organizer',
+        organizerName: { $regex: search, $options: 'i' }
+      }).select('_id');
+
+      const organizerIds = matchingOrganizers.map(org => org._id);
+
+      query.$or = [
+        { name: { $regex: search, $options: 'i' } },
+        { organizerId: { $in: organizerIds } }
+      ];
     }
 
     if (type) query.type = type;
@@ -199,6 +210,47 @@ exports.getEvents = async (req, res) => {
   } catch (error) {
     console.error('Get events error:', error);
     res.status(500).json({ success: false, message: 'Failed to fetch events', error: error.message });
+  }
+};
+
+/**
+ * Get trending events (Top 5 created/updated in the last 24h with highest registrations)
+ * GET /api/events/trending
+ * @access Public
+ */
+exports.getTrendingEvents = async (req, res) => {
+  try {
+    const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000);
+
+    const matchQuery = {
+      status: 'published',
+      $or: [
+        { createdAt: { $gte: yesterday } },
+        { updatedAt: { $gte: yesterday } }
+      ]
+    };
+
+    // First fetch events that meet the time criteria
+    const recentEvents = await Event.find(matchQuery)
+      .populate('organizerId', 'organizerName category')
+      .lean();
+
+    // Now manually count registrations to rank them
+    for (let event of recentEvents) {
+      const regCount = await Registration.countDocuments({ eventId: event._id });
+      event.trendingScore = regCount; // Use registrations as a basic metric for "trending"
+    }
+
+    // Sort by descending trending score (highest registrations first)
+    recentEvents.sort((a, b) => b.trendingScore - a.trendingScore);
+
+    // Limit to 5
+    const trendingEvents = recentEvents.slice(0, 5);
+
+    res.status(200).json({ success: true, count: trendingEvents.length, events: trendingEvents });
+  } catch (error) {
+    console.error('Get trending events error:', error);
+    res.status(500).json({ success: false, message: 'Failed to fetch trending events', error: error.message });
   }
 };
 

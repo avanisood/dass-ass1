@@ -102,9 +102,10 @@ const Dashboard = () => {
         );
 
       case 3: // Completed
-        return registrations.filter(
-          (reg) => reg.status === 'completed' || reg.attended === true
-        );
+        return registrations.filter((reg) => {
+          const isPast = reg.eventId?.eventEndDate && new Date(reg.eventId.eventEndDate) < now;
+          return reg.status === 'completed' || reg.attended === true || isPast;
+        });
 
       case 4: // Cancelled
         return registrations.filter(
@@ -516,12 +517,16 @@ const Dashboard = () => {
                           {/* Ticket ID */}
                           <Typography
                             variant="caption"
+                            onClick={() => handleViewTicket(registration)}
                             sx={{
                               fontFamily: '"Space Mono", monospace',
-                              color: '#3D3D3D',
+                              color: '#6B9BC3',
                               display: 'block',
                               marginBottom: 1.5,
-                              fontSize: '0.7rem'
+                              fontSize: '0.7rem',
+                              cursor: 'pointer',
+                              textDecoration: 'underline',
+                              fontWeight: 'bold'
                             }}
                           >
                             🎫 {registration.ticketId}
