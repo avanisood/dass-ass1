@@ -91,20 +91,25 @@ const RegistrationModal = ({ event, open, onClose, onSuccess }) => {
         }),
       });
 
-      // Show success message with ticket ID
-      setTicketId(response.data.ticketId);
-      setSuccess(true);
+      // Explicitly check for successful response
+      if (response.data && response.data.success) {
+        // Show success message with ticket ID
+        setTicketId(response.data.ticketId);
+        setSuccess(true);
 
-      // Close modal after 2 seconds and refresh parent
-      setTimeout(() => {
-        onClose();
-        if (onSuccess) {
-          onSuccess();
-        }
-      }, 2000);
+        // Close modal after 2 seconds and refresh parent
+        setTimeout(() => {
+          onClose();
+          if (onSuccess) {
+            onSuccess();
+          }
+        }, 2000);
+      } else {
+        throw new Error(response.data?.message || 'Registration failed');
+      }
     } catch (err) {
       setError(
-        err.response?.data?.message || 'Registration failed. Please try again.'
+        err.response?.data?.message || err.message || 'Registration failed. Please try again.'
       );
     } finally {
       setLoading(false);
@@ -257,10 +262,10 @@ const RegistrationModal = ({ event, open, onClose, onSuccess }) => {
   if (!event) return null;
 
   return (
-    <Dialog 
-      open={open} 
-      onClose={handleCancel} 
-      maxWidth="md" 
+    <Dialog
+      open={open}
+      onClose={handleCancel}
+      maxWidth="md"
       fullWidth
       PaperProps={{
         className: "window-box",
@@ -272,10 +277,10 @@ const RegistrationModal = ({ event, open, onClose, onSuccess }) => {
         <Typography sx={{ fontFamily: '"Space Mono", monospace', fontWeight: 700, fontSize: '0.875rem' }}>
           REGISTER.EXE
         </Typography>
-        <IconButton 
-          onClick={handleCancel} 
+        <IconButton
+          onClick={handleCancel}
           size="small"
-          sx={{ 
+          sx={{
             padding: '4px',
             '&:hover': { backgroundColor: 'rgba(0,0,0,0.1)' }
           }}
@@ -299,9 +304,9 @@ const RegistrationModal = ({ event, open, onClose, onSuccess }) => {
             <CheckCircle sx={{ fontSize: 80, color: '#6BA368', marginBottom: 2 }} />
 
             {/* Success Message */}
-            <Typography 
-              variant="h4" 
-              sx={{ 
+            <Typography
+              variant="h4"
+              sx={{
                 fontFamily: '"DM Serif Display", serif',
                 color: '#2C2C2C',
                 marginBottom: '1rem'
@@ -311,16 +316,16 @@ const RegistrationModal = ({ event, open, onClose, onSuccess }) => {
             </Typography>
 
             {/* Ticket ID */}
-            <Box sx={{ 
-              backgroundColor: '#F4D4A8', 
+            <Box sx={{
+              backgroundColor: '#F4D4A8',
               border: '2px solid #3D3D3D',
               borderRadius: '8px',
               padding: '1.5rem',
               marginBottom: '2rem'
             }}>
-              <Typography 
-                variant="body2" 
-                sx={{ 
+              <Typography
+                variant="body2"
+                sx={{
                   fontFamily: '"Karla", sans-serif',
                   color: '#3D3D3D',
                   marginBottom: '0.5rem'
@@ -328,9 +333,9 @@ const RegistrationModal = ({ event, open, onClose, onSuccess }) => {
               >
                 Your Ticket ID
               </Typography>
-              <Typography 
-                variant="h5" 
-                sx={{ 
+              <Typography
+                variant="h5"
+                sx={{
                   fontFamily: '"Space Mono", monospace',
                   fontWeight: 700,
                   color: '#E8C17C',
@@ -353,9 +358,9 @@ const RegistrationModal = ({ event, open, onClose, onSuccess }) => {
         ) : (
           <>
             {/* Event Name Header */}
-            <Typography 
-              variant="h5" 
-              sx={{ 
+            <Typography
+              variant="h5"
+              sx={{
                 fontFamily: '"DM Serif Display", serif',
                 color: '#2C2C2C',
                 marginBottom: '1rem'
@@ -366,10 +371,10 @@ const RegistrationModal = ({ event, open, onClose, onSuccess }) => {
 
             {/* Error message */}
             {error && (
-              <Box sx={{ 
-                mb: 2, 
-                p: 1.5, 
-                backgroundColor: '#ffe5e5', 
+              <Box sx={{
+                mb: 2,
+                p: 1.5,
+                backgroundColor: '#ffe5e5',
                 border: '2px solid #C65D4F',
                 borderRadius: '8px'
               }}>
@@ -390,9 +395,9 @@ const RegistrationModal = ({ event, open, onClose, onSuccess }) => {
             {event.type === 'merchandise' && (
               <Box>
                 {/* Select Options Heading */}
-                <Typography 
-                  variant="h6" 
-                  sx={{ 
+                <Typography
+                  variant="h6"
+                  sx={{
                     fontFamily: '"Space Mono", monospace',
                     color: '#2C2C2C',
                     marginTop: 2,
@@ -407,9 +412,9 @@ const RegistrationModal = ({ event, open, onClose, onSuccess }) => {
                 {/* Size Selector */}
                 {event.itemDetails?.variants && (
                   <Box sx={{ marginBottom: 3 }}>
-                    <Typography 
-                      variant="body2" 
-                      sx={{ 
+                    <Typography
+                      variant="body2"
+                      sx={{
                         fontFamily: '"Karla", sans-serif',
                         marginBottom: 1,
                         fontWeight: 600
@@ -427,7 +432,7 @@ const RegistrationModal = ({ event, open, onClose, onSuccess }) => {
                           value={size}
                           control={<Radio />}
                           label={size}
-                          sx={{ 
+                          sx={{
                             '& .MuiFormControlLabel-label': {
                               fontFamily: '"Karla", sans-serif'
                             }
@@ -441,9 +446,9 @@ const RegistrationModal = ({ event, open, onClose, onSuccess }) => {
                 {/* Color Selector */}
                 {event.itemDetails?.variants && formData.size && (
                   <Box sx={{ marginBottom: 3 }}>
-                    <Typography 
-                      variant="body2" 
-                      sx={{ 
+                    <Typography
+                      variant="body2"
+                      sx={{
                         fontFamily: '"Karla", sans-serif',
                         marginBottom: 1,
                         fontWeight: 600
@@ -473,7 +478,7 @@ const RegistrationModal = ({ event, open, onClose, onSuccess }) => {
                             control={<Radio />}
                             label={`${variant.color} (Stock: ${variant.stock})`}
                             disabled={variant.stock === 0}
-                            sx={{ 
+                            sx={{
                               '& .MuiFormControlLabel-label': {
                                 fontFamily: '"Karla", sans-serif'
                               }
@@ -486,9 +491,9 @@ const RegistrationModal = ({ event, open, onClose, onSuccess }) => {
 
                 {/* Quantity Selector */}
                 <Box sx={{ marginBottom: 3 }}>
-                  <Typography 
-                    variant="body2" 
-                    sx={{ 
+                  <Typography
+                    variant="body2"
+                    sx={{
                       fontFamily: '"Karla", sans-serif',
                       marginBottom: 1,
                       fontWeight: 600
@@ -505,9 +510,9 @@ const RegistrationModal = ({ event, open, onClose, onSuccess }) => {
                     >
                       <RemoveIcon />
                     </Button>
-                    <Typography 
-                      variant="h5" 
-                      sx={{ 
+                    <Typography
+                      variant="h5"
+                      sx={{
                         fontFamily: '"Space Mono", monospace',
                         fontWeight: 700,
                         minWidth: '60px',
@@ -525,9 +530,9 @@ const RegistrationModal = ({ event, open, onClose, onSuccess }) => {
                       <AddIcon />
                     </Button>
                   </Box>
-                  <Typography 
-                    variant="caption" 
-                    sx={{ 
+                  <Typography
+                    variant="caption"
+                    sx={{
                       fontFamily: '"Karla", sans-serif',
                       color: '#3D3D3D',
                       display: 'block',
@@ -541,16 +546,16 @@ const RegistrationModal = ({ event, open, onClose, onSuccess }) => {
             )}
 
             {/* Registration Fee Display */}
-            <Box sx={{ 
-              marginTop: 3, 
-              padding: 2, 
+            <Box sx={{
+              marginTop: 3,
+              padding: 2,
               backgroundColor: '#F4D4A8',
               border: '2px solid #3D3D3D',
               borderRadius: '8px'
             }}>
-              <Typography 
-                variant="body2" 
-                sx={{ 
+              <Typography
+                variant="body2"
+                sx={{
                   fontFamily: '"Space Mono", monospace',
                   color: '#3D3D3D',
                   textTransform: 'uppercase',
@@ -560,9 +565,9 @@ const RegistrationModal = ({ event, open, onClose, onSuccess }) => {
               >
                 {event.type === 'merchandise' ? 'Total Amount' : 'Registration Fee'}
               </Typography>
-              <Typography 
-                variant="h5" 
-                sx={{ 
+              <Typography
+                variant="h5"
+                sx={{
                   fontFamily: '"Space Mono", monospace',
                   fontWeight: 700,
                   color: '#2C2C2C'
@@ -571,8 +576,8 @@ const RegistrationModal = ({ event, open, onClose, onSuccess }) => {
                 {event.registrationFee === 0
                   ? 'Free'
                   : event.type === 'merchandise'
-                  ? `₹${event.registrationFee * (formData.quantity || 1)}`
-                  : `₹${event.registrationFee}`}
+                    ? `₹${event.registrationFee * (formData.quantity || 1)}`
+                    : `₹${event.registrationFee}`}
               </Typography>
             </Box>
 
