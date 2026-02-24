@@ -176,13 +176,21 @@ const EventDetail = () => {
   // Check if slots are available
   const areSlotsAvailable = () => {
     if (!event) return false;
+    if (event.type === 'merchandise') {
+      if (!event.itemDetails || !event.itemDetails.variants) return false;
+      return event.itemDetails.variants.some(v => v.stock > 0);
+    }
     return event.registrationCount < event.registrationLimit;
   };
 
   // Calculate remaining slots
   const getRemainingSlots = () => {
     if (!event) return 0;
-    return event.registrationLimit - event.registrationCount;
+    if (event.type === 'merchandise') {
+      if (!event.itemDetails || !event.itemDetails.variants) return 0;
+      return event.itemDetails.variants.reduce((sum, v) => sum + v.stock, 0);
+    }
+    return Math.max(0, event.registrationLimit - event.registrationCount);
   };
 
   // Determine registration status
@@ -225,9 +233,11 @@ const EventDetail = () => {
         setRegistrationSuccess(response.data.message || 'Successfully registered!');
         setRegistrationModalOpen(false);
         checkRegistrationStatus();
+      } else {
+        throw new Error(response.data.message || 'Registration failed');
       }
     } catch (err) {
-      setRegistrationError(err.response?.data?.message || 'Registration failed. Please try again.');
+      setRegistrationError(err.response?.data?.message || err.message || 'Registration failed. Please try again.');
     } finally {
       setRegistering(false);
     }

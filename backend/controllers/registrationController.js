@@ -54,7 +54,7 @@ exports.registerForEvent = async (req, res) => {
     }
 
     // Validate: Registration limit not reached
-    if (event.registrationCount >= event.registrationLimit) {
+    if (event.type !== 'merchandise' && event.registrationCount >= event.registrationLimit) {
       return res.status(400).json({
         success: false,
         message: 'Registration limit reached'

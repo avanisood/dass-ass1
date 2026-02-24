@@ -90,13 +90,25 @@ const BrowseEvents = () => {
       const response = await api.get(`/events?${params.toString()}`);
 
       // Handle different response formats
+      let fetchedEvents = [];
       if (Array.isArray(response.data)) {
-        setEvents(response.data);
+        fetchedEvents = response.data;
       } else if (response.data.events && Array.isArray(response.data.events)) {
-        setEvents(response.data.events);
-      } else {
-        setEvents([]);
+        fetchedEvents = response.data.events;
       }
+
+      // Sort fetchedEvents to push closed events to the bottom
+      const now = new Date();
+      fetchedEvents.sort((a, b) => {
+        const aClosed = new Date(a.registrationDeadline) < now;
+        const bClosed = new Date(b.registrationDeadline) < now;
+        if (aClosed && !bClosed) return 1;
+        if (!aClosed && bClosed) return -1;
+        // If both are same status, optionally sort by start date ascending
+        return new Date(a.eventStartDate) - new Date(b.eventStartDate);
+      });
+
+      setEvents(fetchedEvents);
     } catch (err) {
       setError('Failed to fetch events. Please try again.');
       console.error('Error fetching events:', err);

@@ -222,32 +222,52 @@ exports.getTrendingEvents = async (req, res) => {
   try {
     const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000);
 
-    const matchQuery = {
-      status: 'published',
-      $or: [
-        { createdAt: { $gte: yesterday } },
-        { updatedAt: { $gte: yesterday } }
-      ]
-    };
+    // Aggregate registrations created in the last 24 hours
+    const trendingAggregation = await Registration.aggregate([
+      {
+        $match: {
+          createdAt: { $gte: yesterday },
+          status: { $ne: 'cancelled' }
+        }
+      },
+      {
+        $group: {
+          _id: '$eventId',
+          recentRegistrations: { $sum: 1 }
+        }
+      },
+      {
+        $sort: { recentRegistrations: -1 }
+      },
+      {
+        $limit: 5
+      }
+    ]);
 
-    // First fetch events that meet the time criteria
-    const recentEvents = await Event.find(matchQuery)
+    // If no registrations in the last 24h, return empty
+    if (trendingAggregation.length === 0) {
+      return res.status(200).json({ success: true, count: 0, events: [] });
+    }
+
+    // Fetch the full event details for these trending event IDs
+    const eventIds = trendingAggregation.map(item => item._id);
+    const events = await Event.find({
+      _id: { $in: eventIds },
+      status: 'published'
+    })
       .populate('organizerId', 'organizerName category')
       .lean();
 
-    // Now manually count registrations to rank them
-    for (let event of recentEvents) {
-      const regCount = await Registration.countDocuments({ eventId: event._id });
-      event.trendingScore = regCount; // Use registrations as a basic metric for "trending"
-    }
+    // Map the recent registration count back to the event objects and sort them correctly
+    const formattedTrendingEvents = events.map(event => {
+      const aggItem = trendingAggregation.find(a => a._id.toString() === event._id.toString());
+      return {
+        ...event,
+        trendingScore: aggItem ? aggItem.recentRegistrations : 0
+      };
+    }).sort((a, b) => b.trendingScore - a.trendingScore);
 
-    // Sort by descending trending score (highest registrations first)
-    recentEvents.sort((a, b) => b.trendingScore - a.trendingScore);
-
-    // Limit to 5
-    const trendingEvents = recentEvents.slice(0, 5);
-
-    res.status(200).json({ success: true, count: trendingEvents.length, events: trendingEvents });
+    res.status(200).json({ success: true, count: formattedTrendingEvents.length, events: formattedTrendingEvents });
   } catch (error) {
     console.error('Get trending events error:', error);
     res.status(500).json({ success: false, message: 'Failed to fetch trending events', error: error.message });
