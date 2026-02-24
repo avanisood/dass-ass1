@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
 import api from '../../services/api';
 import {
@@ -29,6 +30,7 @@ import NotificationsPopup from '../../components/participant/NotificationsPopup'
 // Participant Dashboard Component
 const Dashboard = () => {
   const { user } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   // State for tabs and registrations
   const [currentTab, setCurrentTab] = useState(0);
