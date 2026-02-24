@@ -5,13 +5,14 @@ const authorize = require('../middleware/authorize');
 const optionalAuthenticate = require('../middleware/optionalAuthenticate');
 const eventController = require('../controllers/eventController');
 
+// IMPORTANT: Specific routes MUST come before parameterized routes
 // GET /api/events/trending - Get trending events (Top 5 in 24h) - Public access
 router.get('/trending', eventController.getTrendingEvents);
 
 // GET /api/events - Browse events (with filters, search) - Public access
 router.get('/', optionalAuthenticate, eventController.getEvents);
 
-// GET /api/events/:id - Event details - Public access
+// GET /api/events/:id - Event details - Public access (MUST be after /trending)
 router.get('/:id', eventController.getEventById);
 
 // GET /api/events/:id/registrations - Get event registrations (Organizer only)

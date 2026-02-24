@@ -292,6 +292,15 @@ exports.getEventById = async (req, res) => {
   try {
     const { id } = req.params;
 
+    // Validate ObjectId format
+    const mongoose = require('mongoose');
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Invalid event ID format' 
+      });
+    }
+
     const event = await Event.findById(id)
       .populate('organizerId', 'organizerName category email contactEmail')
       .lean();

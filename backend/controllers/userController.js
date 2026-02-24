@@ -122,6 +122,15 @@ exports.getOrganizerById = async (req, res) => {
     try {
         const { id } = req.params;
 
+        // Validate ObjectId format
+        const mongoose = require('mongoose');
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({ 
+                success: false, 
+                message: 'Invalid organizer ID format' 
+            });
+        }
+
         const organizer = await User.findById(id).select('organizerName category description contactEmail createdAt role');
 
         if (!organizer || organizer.role !== 'organizer') {
