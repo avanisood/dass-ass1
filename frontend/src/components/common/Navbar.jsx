@@ -65,7 +65,7 @@ const Navbar = () => {
           { label: 'Dashboard', path: '/participant/dashboard', icon: <DashboardIcon /> },
           { label: 'Browse Events', path: '/participant/events', icon: <EventIcon /> }
         ];
-      
+
       case 'organizer':
         return [
           { label: 'Dashboard', path: '/organizer/dashboard', icon: <DashboardIcon /> },
@@ -73,13 +73,14 @@ const Navbar = () => {
           { label: 'QR Scanner', path: '/organizer/qr-scanner', icon: <QrIcon /> },
           { label: 'Profile', path: '/organizer/profile', icon: <PersonIcon /> }
         ];
-      
+
       case 'admin':
         return [
           { label: 'Dashboard', path: '/admin/dashboard', icon: <DashboardIcon /> },
-          { label: 'Manage Organizers', path: '/admin/organizers', icon: <PeopleIcon /> }
+          { label: 'Manage Organizers', path: '/admin/organizers', icon: <PeopleIcon /> },
+          { label: 'Password Resets', path: '/admin/password-requests', icon: <PersonIcon /> }
         ];
-      
+
       default:
         return [];
     }
@@ -88,12 +89,12 @@ const Navbar = () => {
   const navItems = getNavigationItems();
 
   return (
-    <AppBar 
-      position="sticky" 
-      sx={{ 
-        backgroundColor: '#B8D8D8', 
-        borderBottom: '3px solid #3D3D3D', 
-        boxShadow: 'none' 
+    <AppBar
+      position="sticky"
+      sx={{
+        backgroundColor: '#B8D8D8',
+        borderBottom: '3px solid #3D3D3D',
+        boxShadow: 'none'
       }}
     >
       <Container maxWidth="xl">
@@ -102,8 +103,8 @@ const Navbar = () => {
           <Typography
             variant="h6"
             component="div"
-            sx={{ 
-              flexGrow: 1, 
+            sx={{
+              flexGrow: 1,
               fontFamily: '"Space Mono", monospace',
               fontWeight: 700,
               cursor: 'pointer',
@@ -128,14 +129,14 @@ const Navbar = () => {
                 className="window-button"
                 startIcon={item.icon}
                 onClick={() => handleNavigate(item.path)}
-                sx={{ 
+                sx={{
                   backgroundColor: '#FEFEFE',
                   border: '2px solid #3D3D3D',
                   color: '#2C2C2C',
                   fontFamily: '"Space Mono", monospace',
                   fontSize: '0.75rem',
                   padding: '6px 16px',
-                  '&:hover': { 
+                  '&:hover': {
                     backgroundColor: '#f0f0f0',
                     transform: 'translate(2px, 2px)'
                   }
@@ -152,9 +153,9 @@ const Navbar = () => {
             <Typography variant="body2" sx={{ mr: 1, color: '#2C2C2C', fontFamily: '"Karla", sans-serif', fontSize: '0.875rem' }}>
               {user.firstName || user.organizerName || 'User'}
             </Typography>
-            <Typography 
-              variant="caption" 
-              sx={{ 
+            <Typography
+              variant="caption"
+              sx={{
                 backgroundColor: '#F4D4A8',
                 color: '#2C2C2C',
                 px: 1.5,
@@ -174,7 +175,7 @@ const Navbar = () => {
               className="window-button-gold"
               startIcon={<LogoutIcon />}
               onClick={handleLogout}
-              sx={{ 
+              sx={{
                 backgroundColor: '#E8C17C',
                 border: '2px solid #3D3D3D',
                 borderRadius: '8px',
@@ -184,7 +185,7 @@ const Navbar = () => {
                 fontSize: '0.75rem',
                 padding: '6px 16px',
                 ml: 1,
-                '&:hover': { 
+                '&:hover': {
                   backgroundColor: '#D4A574',
                   transform: 'translate(2px, 2px)'
                 }
@@ -203,8 +204,8 @@ const Navbar = () => {
           {/* Mobile Menu Button */}
           <IconButton
             onClick={handleMenuOpen}
-            sx={{ 
-              display: { xs: 'flex', md: 'none' }, 
+            sx={{
+              display: { xs: 'flex', md: 'none' },
               ml: 'auto',
               color: 'white'
             }}
@@ -236,12 +237,12 @@ const Navbar = () => {
                 </Typography>
               </Box>
             </MenuItem>
-            
+
             <Box sx={{ borderTop: 1, borderColor: 'divider', my: 1 }} />
-            
+
             {/* Navigation Items */}
             {navItems.map((item) => (
-              <MenuItem 
+              <MenuItem
                 key={item.path}
                 onClick={() => handleNavigate(item.path)}
               >
@@ -251,9 +252,9 @@ const Navbar = () => {
                 </Box>
               </MenuItem>
             ))}
-            
+
             <Box sx={{ borderTop: 1, borderColor: 'divider', my: 1 }} />
-            
+
             {/* Logout */}
             <MenuItem onClick={handleLogout}>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>

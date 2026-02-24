@@ -26,7 +26,9 @@ import {
   Add as AddIcon,
   Delete as DeleteIcon,
   Visibility as ViewIcon,
-  ContentCopy as CopyIcon
+  ContentCopy as CopyIcon,
+  Block as BlockIcon,
+  CheckCircle as CheckCircleIcon
 } from '@mui/icons-material';
 import api from '../../services/api';
 
@@ -98,7 +100,7 @@ const ManageOrganizers = () => {
     try {
       // Call API to create organizer
       const response = await api.post('/organizers', formData);
-      
+
       // Store generated credentials
       setCredentials({
         email: response.data.organizer.email,
@@ -143,6 +145,18 @@ const ManageOrganizers = () => {
     } catch (error) {
       console.error('Error deleting organizer:', error);
       showSnackbar('Failed to remove organizer', 'error');
+    }
+  };
+
+  // Handle toggle organizer status
+  const handleToggleStatus = async (organizer) => {
+    try {
+      const response = await api.put(`/organizers/${organizer._id}/status`);
+      showSnackbar(response.data.message || 'Organizer status updated', 'success');
+      fetchOrganizers(); // Refresh list
+    } catch (error) {
+      console.error('Error toggling organizer status:', error);
+      showSnackbar(error.response?.data?.message || 'Failed to update organizer status', 'error');
     }
   };
 
@@ -214,10 +228,10 @@ const ManageOrganizers = () => {
                   <TableCell>{organizer.category}</TableCell>
                   <TableCell>{organizer.contactEmail}</TableCell>
                   <TableCell>
-                    <Chip 
-                      label="Active" 
-                      color="success" 
-                      size="small" 
+                    <Chip
+                      label={organizer.isActive !== false ? "Active" : "Disabled"}
+                      color={organizer.isActive !== false ? "success" : "default"}
+                      size="small"
                     />
                   </TableCell>
                   <TableCell align="right">
@@ -226,9 +240,18 @@ const ManageOrganizers = () => {
                         <ViewIcon />
                       </IconButton>
                     </Tooltip>
-                    <Tooltip title="Remove Organizer">
-                      <IconButton 
-                        size="small" 
+                    <Tooltip title={organizer.isActive !== false ? "Disable Organizer" : "Enable Organizer"}>
+                      <IconButton
+                        size="small"
+                        color={organizer.isActive !== false ? "warning" : "success"}
+                        onClick={() => handleToggleStatus(organizer)}
+                      >
+                        {organizer.isActive !== false ? <BlockIcon /> : <CheckCircleIcon />}
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Delete Permanently">
+                      <IconButton
+                        size="small"
                         color="error"
                         onClick={() => setDeleteConfirm(organizer)}
                       >
@@ -244,8 +267,8 @@ const ManageOrganizers = () => {
       </TableContainer>
 
       {/* Add Organizer Modal */}
-      <Dialog 
-        open={openAddModal} 
+      <Dialog
+        open={openAddModal}
         onClose={() => setOpenAddModal(false)}
         maxWidth="sm"
         fullWidth
@@ -302,8 +325,8 @@ const ManageOrganizers = () => {
       </Dialog>
 
       {/* Credentials Display Dialog */}
-      <Dialog 
-        open={openCredentialsDialog} 
+      <Dialog
+        open={openCredentialsDialog}
         onClose={() => setOpenCredentialsDialog(false)}
         maxWidth="sm"
         fullWidth
@@ -314,7 +337,7 @@ const ManageOrganizers = () => {
             Organizer account created successfully!
           </Alert>
           <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-            Please save these credentials and share them with the organizer. 
+            Please save these credentials and share them with the organizer.
             They will not be shown again.
           </Typography>
           <Paper sx={{ p: 2, bgcolor: 'grey.50' }}>
@@ -353,14 +376,14 @@ const ManageOrganizers = () => {
         <DialogTitle>Confirm Removal</DialogTitle>
         <DialogContent>
           <Typography>
-            Are you sure you want to remove organizer "{deleteConfirm?.organizerName}"? 
+            Are you sure you want to remove organizer "{deleteConfirm?.organizerName}"?
             This action cannot be undone.
           </Typography>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setDeleteConfirm(null)}>Cancel</Button>
-          <Button 
-            onClick={() => handleDelete(deleteConfirm._id)} 
+          <Button
+            onClick={() => handleDelete(deleteConfirm._id)}
             color="error"
             variant="contained"
           >
@@ -376,8 +399,8 @@ const ManageOrganizers = () => {
         onClose={handleCloseSnackbar}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
       >
-        <Alert 
-          onClose={handleCloseSnackbar} 
+        <Alert
+          onClose={handleCloseSnackbar}
           severity={snackbar.severity}
           sx={{ width: '100%' }}
         >

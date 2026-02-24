@@ -166,6 +166,37 @@ exports.deleteOrganizer = async (req, res) => {
 };
 
 /**
+ * Toggle an organizer's active status
+ * PUT /api/organizers/:id/status
+ * @access Private (Admin only)
+ */
+exports.toggleOrganizerStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const organizer = await User.findById(id);
+    if (!organizer || organizer.role !== 'organizer') {
+      return res.status(404).json({ success: false, message: 'Organizer not found' });
+    }
+
+    organizer.isActive = !organizer.isActive;
+    await organizer.save();
+
+    const organizerResponse = organizer.toObject();
+    delete organizerResponse.password;
+
+    res.status(200).json({
+      success: true,
+      message: `Organizer ${organizer.isActive ? 'enabled' : 'disabled'} successfully`,
+      organizer: organizerResponse
+    });
+  } catch (error) {
+    console.error('Toggle organizer status error:', error);
+    res.status(500).json({ success: false, message: 'Failed to toggle organizer status', error: error.message });
+  }
+};
+
+/**
  * Get all users (with optional role filter)
  * GET /api/admin/users?role=participant
  * @access Private (Admin only)

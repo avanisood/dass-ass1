@@ -16,4 +16,7 @@ router.delete('/:id', authenticate, authorize('admin'), adminController.deleteOr
 // PUT /api/organizers/:id - Update organizer account (Admin only)
 router.put('/:id', authenticate, authorize('admin'), adminController.updateOrganizer);
 
+// PUT /api/organizers/:id/status - Toggle organizer active status (Admin only)
+router.put('/:id/status', authenticate, authorize('admin'), adminController.toggleOrganizerStatus);
+
 module.exports = router;

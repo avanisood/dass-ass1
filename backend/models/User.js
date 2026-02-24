@@ -62,6 +62,10 @@ const userSchema = new mongoose.Schema({
     type: String,
     trim: true
   },
+  isActive: {
+    type: Boolean,
+    default: true
+  },
   category: {
     type: String,
     trim: true
