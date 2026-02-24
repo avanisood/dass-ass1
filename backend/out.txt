@@ -1,0 +1,225 @@
+
+> felicity-backend@1.0.0 test
+> jest --forceExit --detectOpenHandles --verbose tests/events.test.js
+
+● Validation Warning:
+
+  Unknown option "setupFilesAfterSetup" with value [] was found.
+  This is probably a typing mistake. Fixing it will remove this message.
+
+  Configuration Documentation:
+  https://jestjs.io/docs/configuration
+
+● Validation Warning:
+
+  Unknown option "setupFilesAfterSetup" with value [] was found.
+  This is probably a typing mistake. Fixing it will remove this message.
+
+  Configuration Documentation:
+  https://jestjs.io/docs/configuration
+
+  console.log
+    MongoDB connected successfully
+
+      at log (server.js:39:13)
+
+  console.error
+    Error initializing admin user: Client must be connected before running operations
+
+      56 |       }
+      57 |     } catch (err) {
+    > 58 |       console.error('Error initializing admin user:', err.message);
+         |               ^
+      59 |     }
+      60 |   })
+      61 |   .catch((err) => {
+
+      at error (server.js:58:15)
+
+FAIL tests/events.test.js (9.39 s)
+  Events API
+    POST /api/events
+      ✓ should create a draft event as organizer (319 ms)
+      ✓ should create a merchandise event with item details (198 ms)
+      ✓ should reject event creation with missing required fields (164 ms)
+      ✓ should reject event creation with missing dates (180 ms)
+      ✓ should reject if registration deadline is after event start (165 ms)
+      ✓ should reject if event start date is after end date (124 ms)
+      ✓ should reject event creation by participant (135 ms)
+      ✓ should accept custom form fields for normal events (136 ms)
+    GET /api/events
+      ✕ should return only published events for public access (136 ms)
+      ✕ should search events by name (167 ms)
+      ✕ should return no results for non-matching search (172 ms)
+      ✕ should filter events by type (160 ms)
+      ✕ should filter events by eligibility (158 ms)
+      ✕ should filter events by date range (148 ms)
+    GET /api/events/:id
+      ✕ should return event details by ID (142 ms)
+      ✕ should return 404 for non-existent event (28 ms)
+    PUT /api/events/:id
+      ✓ should update a draft event by its owner (189 ms)
+      ✓ should reject editing a published event (143 ms)
+      ✓ should reject editing by non-owner organizer (228 ms)
+      ✓ should return 404 for non-existent event (133 ms)
+    DELETE /api/events/:id
+      ✓ should delete a draft event (155 ms)
+      ✓ should reject deleting a published event (139 ms)
+      ✓ should reject deleting by non-owner (242 ms)
+      ✓ should allow admin to delete a draft event (296 ms)
+    PUT /api/events/:id/status
+      ✓ should transition from draft to published (177 ms)
+      ✓ should transition from published to ongoing (136 ms)
+      ✓ should transition from published to closed (161 ms)
+      ✓ should transition from ongoing to completed (162 ms)
+      ✓ should reject invalid transition draft -> ongoing (144 ms)
+      ✓ should reject transition from completed to anything (142 ms)
+      ✓ should reject transition from closed to anything (158 ms)
+      ✓ should reject invalid status value (136 ms)
+      ✓ should reject status change by non-owner (239 ms)
+    GET /api/events/:id/registrations
+      ✓ should return registrations for event owner (132 ms)
+      ✓ should reject registration view by non-owner organizer (218 ms)
+      ✓ should reject registration view by participant (222 ms)
+
+  ● Events API › GET /api/events › should return only published events for public access
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 200
+    Received: 401
+
+      190 |             const res = await request(app).get('/api/events');
+      191 |
+    > 192 |             expect(res.status).toBe(200);
+          |                                ^
+      193 |             expect(res.body.events.length).toBe(1);
+      194 |             expect(res.body.events[0].name).toBe('Published Event');
+      195 |         });
+
+      at Object.toBe (tests/events.test.js:192:32)
+
+  ● Events API › GET /api/events › should search events by name
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 200
+    Received: 401
+
+      198 |             const res = await request(app).get('/api/events?search=Published');
+      199 |
+    > 200 |             expect(res.status).toBe(200);
+          |                                ^
+      201 |             expect(res.body.events.length).toBe(1);
+      202 |         });
+      203 |
+
+      at Object.toBe (tests/events.test.js:200:32)
+
+  ● Events API › GET /api/events › should return no results for non-matching search
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 200
+    Received: 401
+
+      205 |             const res = await request(app).get('/api/events?search=nonexistent');
+      206 |
+    > 207 |             expect(res.status).toBe(200);
+          |                                ^
+      208 |             expect(res.body.events.length).toBe(0);
+      209 |         });
+      210 |
+
+      at Object.toBe (tests/events.test.js:207:32)
+
+  ● Events API › GET /api/events › should filter events by type
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 200
+    Received: 401
+
+      218 |             const res = await request(app).get('/api/events?type=merchandise');
+      219 |
+    > 220 |             expect(res.status).toBe(200);
+          |                                ^
+      221 |             expect(res.body.events.every(e => e.type === 'merchandise')).toBe(true);
+      222 |         });
+      223 |
+
+      at Object.toBe (tests/events.test.js:220:32)
+
+  ● Events API › GET /api/events › should filter events by eligibility
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 200
+    Received: 401
+
+      231 |             const res = await request(app).get('/api/events?eligibility=IIIT');
+      232 |
+    > 233 |             expect(res.status).toBe(200);
+          |                                ^
+      234 |             expect(res.body.events.length).toBeGreaterThanOrEqual(1);
+      235 |         });
+      236 |
+
+      at Object.toBe (tests/events.test.js:233:32)
+
+  ● Events API › GET /api/events › should filter events by date range
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 200
+    Received: 401
+
+      243 |                 .get(`/api/events?startDate=${futureStart.toISOString()}&endDate=${futureEnd.toISOString()}`);
+      244 |
+    > 245 |             expect(res.status).toBe(200);
+          |                                ^
+      246 |         });
+      247 |     });
+      248 |
+
+      at Object.toBe (tests/events.test.js:245:32)
+
+  ● Events API › GET /api/events/:id › should return event details by ID
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 200
+    Received: 401
+
+      256 |             const res = await request(app).get(`/api/events/${event._id}`);
+      257 |
+    > 258 |             expect(res.status).toBe(200);
+          |                                ^
+      259 |             expect(res.body.event.name).toBe('Test Event');
+      260 |         });
+      261 |
+
+      at Object.toBe (tests/events.test.js:258:32)
+
+  ● Events API › GET /api/events/:id › should return 404 for non-existent event
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 404
+    Received: 401
+
+      263 |             const res = await request(app).get('/api/events/507f1f77bcf86cd799439011');
+      264 |
+    > 265 |             expect(res.status).toBe(404);
+          |                                ^
+      266 |         });
+      267 |     });
+      268 |
+
+      at Object.toBe (tests/events.test.js:265:32)
+
+Test Suites: 1 failed, 1 total
+Tests:       8 failed, 28 passed, 36 total
+Snapshots:   0 total
+Time:        9.459 s
+Ran all test suites matching tests/events.test.js.

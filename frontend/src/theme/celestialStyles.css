@@ -1,0 +1,491 @@
+/* ===============================================
+   FELICITY - CELESTIAL THEME STYLES
+   =============================================== */
+
+/* Font Imports */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,400;1,600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Raleway:wght@400;500;600;700&display=swap');
+
+/* ===============================================
+   ROOT VARIABLES
+   =============================================== */
+:root {
+  /* Primary Colors - Teal */
+  --primary-main: #2D7A8C;
+  --primary-light: #5BA3B8;
+  --primary-dark: #1A4D5C;
+  
+  /* Secondary Colors - Gold */
+  --secondary-main: #D4AF37;
+  --secondary-light: #F5E6B3;
+  --secondary-dark: #B8941F;
+  
+  /* Background Colors */
+  --bg-default: #E8F4F8;
+  --bg-paper: #FFFFFF;
+  --bg-gradient-start: #E8F4F8;
+  --bg-gradient-end: #FFFFFF;
+  
+  /* Text Colors */
+  --text-primary: #0F2932;
+  --text-secondary: #2D7A8C;
+  --text-disabled: #94A3B8;
+  
+  /* Shadow Colors */
+  --shadow-teal: rgba(29, 122, 140, 0.15);
+  --shadow-teal-hover: rgba(29, 122, 140, 0.3);
+  
+  /* Font Families */
+  --font-heading: 'Cinzel', serif;
+  --font-body: 'Cormorant Garamond', serif;
+  --font-ui: 'Raleway', sans-serif;
+}
+
+/* ===============================================
+   GLOBAL BODY STYLES
+   =============================================== */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-body);
+  background: linear-gradient(180deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+  background-attachment: fixed;
+  min-height: 100vh;
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ===============================================
+   CUSTOM SCROLLBAR
+   =============================================== */
+/* For Webkit browsers (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: linear-gradient(180deg, #E8F4F8 0%, #F0F8FA 100%);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--primary-main) 0%, var(--primary-light) 100%);
+  border-radius: 10px;
+  border: 2px solid #E8F4F8;
+  transition: all 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, var(--primary-dark) 0%, var(--primary-main) 100%);
+  border-color: #D4E8ED;
+  box-shadow: 0 0 8px var(--shadow-teal);
+}
+
+::-webkit-scrollbar-thumb:active {
+  background: var(--primary-dark);
+}
+
+/* For Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--primary-main) #E8F4F8;
+}
+
+/* ===============================================
+   FLOATING CARD CLASS
+   =============================================== */
+.floating-card {
+  background: linear-gradient(135deg, #FFFFFF 0%, #F8FCFD 100%);
+  border-radius: 20px;
+  box-shadow: 
+    0 4px 12px var(--shadow-teal),
+    0 1px 3px rgba(0, 0, 0, 0.08);
+  border: 2px solid var(--primary-light);
+  padding: 24px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.floating-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--primary-main) 0%, var(--secondary-main) 50%, var(--primary-light) 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.floating-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 
+    0 8px 24px var(--shadow-teal-hover),
+    0 2px 6px rgba(0, 0, 0, 0.12);
+  border-color: var(--primary-main);
+}
+
+.floating-card:hover::before {
+  opacity: 1;
+}
+
+/* Floating Card Variants */
+.floating-card-compact {
+  padding: 16px;
+  border-radius: 16px;
+}
+
+.floating-card-large {
+  padding: 32px;
+  border-radius: 24px;
+}
+
+.floating-card-no-hover {
+  transition: none;
+}
+
+.floating-card-no-hover:hover {
+  transform: none;
+  box-shadow: 
+    0 4px 12px var(--shadow-teal),
+    0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+/* ===============================================
+   SKY GRADIENT BACKGROUND CLASS
+   =============================================== */
+.sky-gradient-bg {
+  background: linear-gradient(135deg, 
+    var(--primary-dark) 0%, 
+    var(--primary-main) 25%, 
+    var(--primary-light) 50%, 
+    #87CEEB 75%, 
+    #B0E0E6 100%
+  );
+  position: relative;
+  overflow: hidden;
+}
+
+.sky-gradient-bg::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 20% 80%, rgba(212, 175, 55, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(91, 163, 184, 0.15) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+/* Sky Gradient Variants */
+.sky-gradient-horizontal {
+  background: linear-gradient(90deg, 
+    var(--primary-dark) 0%, 
+    var(--primary-main) 50%, 
+    var(--primary-light) 100%
+  );
+}
+
+.sky-gradient-vertical {
+  background: linear-gradient(180deg, 
+    var(--primary-dark) 0%, 
+    var(--primary-main) 50%, 
+    var(--primary-light) 100%
+  );
+}
+
+.sky-gradient-radial {
+  background: radial-gradient(circle at center, 
+    var(--primary-light) 0%, 
+    var(--primary-main) 50%, 
+    var(--primary-dark) 100%
+  );
+}
+
+/* ===============================================
+   CELESTIAL BUTTON CLASS
+   =============================================== */
+.celestial-button {
+  background: linear-gradient(135deg, var(--primary-main) 0%, var(--primary-light) 100%);
+  color: white;
+  border: none;
+  border-radius: 50px; /* Pill shape */
+  padding: 12px 32px;
+  font-family: var(--font-ui);
+  font-size: 16px;
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 
+    0 4px 12px var(--shadow-teal),
+    0 1px 3px rgba(0, 0, 0, 0.08);
+  position: relative;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.celestial-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, var(--primary-light) 0%, var(--secondary-main) 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.celestial-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 8px 24px var(--shadow-teal-hover),
+    0 2px 6px rgba(0, 0, 0, 0.12);
+}
+
+.celestial-button:hover::before {
+  opacity: 1;
+}
+
+.celestial-button:active {
+  transform: translateY(0);
+  box-shadow: 
+    0 2px 8px var(--shadow-teal),
+    0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+.celestial-button:disabled {
+  background: linear-gradient(135deg, #94A3B8 0%, #CBD5E1 100%);
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+  opacity: 0.6;
+}
+
+/* Ensure text stays on top of gradient */
+.celestial-button > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Celestial Button Variants */
+.celestial-button-secondary {
+  background: linear-gradient(135deg, var(--secondary-main) 0%, var(--secondary-light) 100%);
+  color: var(--text-primary);
+}
+
+.celestial-button-secondary::before {
+  background: linear-gradient(135deg, var(--secondary-dark) 0%, var(--secondary-main) 100%);
+}
+
+.celestial-button-outline {
+  background: transparent;
+  border: 2px solid var(--primary-main);
+  color: var(--primary-main);
+  box-shadow: none;
+}
+
+.celestial-button-outline:hover {
+  background: linear-gradient(135deg, var(--primary-main) 0%, var(--primary-light) 100%);
+  color: white;
+  border-color: transparent;
+}
+
+.celestial-button-small {
+  padding: 8px 24px;
+  font-size: 14px;
+  border-radius: 40px;
+}
+
+.celestial-button-large {
+  padding: 16px 40px;
+  font-size: 18px;
+  border-radius: 60px;
+}
+
+/* ===============================================
+   TYPOGRAPHY HELPERS
+   =============================================== */
+.celestial-heading {
+  font-family: var(--font-heading);
+  color: var(--text-primary);
+  font-weight: 700;
+  line-height: 1.2;
+  margin: 0;
+}
+
+.celestial-subheading {
+  font-family: var(--font-body);
+  color: var(--text-secondary);
+  font-weight: 600;
+  line-height: 1.4;
+  margin: 0;
+}
+
+.celestial-body {
+  font-family: var(--font-body);
+  color: var(--text-primary);
+  font-weight: 400;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.celestial-caption {
+  font-family: var(--font-ui);
+  color: var(--text-secondary);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* ===============================================
+   UTILITY CLASSES
+   =============================================== */
+.text-gradient {
+  background: linear-gradient(135deg, var(--primary-main) 0%, var(--secondary-main) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.teal-accent {
+  color: var(--primary-main);
+}
+
+.gold-accent {
+  color: var(--secondary-main);
+}
+
+.shadow-teal {
+  box-shadow: 0 4px 12px var(--shadow-teal);
+}
+
+.shadow-teal-lg {
+  box-shadow: 0 8px 24px var(--shadow-teal-hover);
+}
+
+.border-teal {
+  border: 2px solid var(--primary-main);
+}
+
+.border-teal-light {
+  border: 1px solid var(--primary-light);
+}
+
+.border-gold {
+  border: 2px solid var(--secondary-main);
+}
+
+/* ===============================================
+   ANIMATION HELPERS
+   =============================================== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInFromLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInFromRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.6s ease-out;
+}
+
+.animate-slide-left {
+  animation: slideInFromLeft 0.6s ease-out;
+}
+
+.animate-slide-right {
+  animation: slideInFromRight 0.6s ease-out;
+}
+
+/* ===============================================
+   RESPONSIVE HELPERS
+   =============================================== */
+@media (max-width: 768px) {
+  .floating-card {
+    padding: 16px;
+    border-radius: 16px;
+  }
+  
+  .celestial-button {
+    padding: 10px 24px;
+    font-size: 14px;
+  }
+  
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+}
+
+/* ===============================================
+   DARK MODE SUPPORT (Optional)
+   =============================================== */
+@media (prefers-color-scheme: dark) {
+  /* Uncomment to enable dark mode */
+  /*
+  :root {
+    --bg-default: #0F2932;
+    --bg-paper: #1A4D5C;
+    --text-primary: #E8F4F8;
+    --text-secondary: #5BA3B8;
+  }
+  
+  body {
+    background: linear-gradient(180deg, #0F2932 0%, #1A4D5C 100%);
+  }
+  
+  .floating-card {
+    background: linear-gradient(135deg, #1A4D5C 0%, #2D7A8C 100%);
+    border-color: #5BA3B8;
+  }
+  */
+}
