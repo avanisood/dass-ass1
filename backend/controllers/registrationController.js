@@ -181,18 +181,14 @@ exports.registerForEvent = async (req, res) => {
       .populate('eventId', 'name type eventStartDate eventEndDate registrationFee')
       .populate('participantId', 'firstName lastName email');
 
-    // Send confirmation email with ticket details and QR code
-    try {
-      await sendRegistrationConfirmation(
-        req.user.email,
-        populatedRegistration.eventId,
-        populatedRegistration
-      );
-      console.log('Confirmation email sent to:', req.user.email);
-    } catch (emailError) {
-      console.error('Failed to send confirmation email:', emailError);
-      // Continue even if email fails - registration was successful
-    }
+    // Send confirmation email asynchronously in the background
+    sendRegistrationConfirmation(
+      req.user.email,
+      populatedRegistration.eventId,
+      populatedRegistration
+    ).catch(err => {
+      console.error('Background email failed:', err.message);
+    });
 
     // Return registration with success message
     res.status(201).json({
