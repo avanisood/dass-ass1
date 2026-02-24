@@ -28,6 +28,38 @@ I used these tools to build the server that processes logic and saves all the da
 * **qrcode**: Similar to the frontend, this enables the server to generate a QR code image data URL, which is then embedded into the email tickets sent to participants.
 * **socket.io**: Pairs with the frontend socket library to power the real-time discussion forums and instant announcements.
 
+## User Data Models [2 Marks]
+
+The system defines a unified `User` collection in MongoDB (`backend/models/User.js`) that dynamically stores either Participant or Organizer details based on their `role`.
+
+### 6.1 Participant Details
+As per the requirements, each participant record strictly stores:
+* **First Name** (`firstName`)
+* **Last Name** (`lastName`)
+* **Email** (`email` - strictly `unique: true` at the database level to prevent duplicate accounts)
+* **Participant Type** (`participantType` - enum: 'iiit', 'non-iiit')
+* **College / Org Name** (`college`)
+* **Contact Number** (`contactNumber`)
+* **Password** (`password` - securely hashed using `bcrypt`)
+
+**Additional Attributes & Justifications:**
+* `role` (String): Necessary to distinguish participants from organizers and admins within the same collection.
+* `onboardingCompleted` (Boolean): Justified to ensure new users are forced through the profile completion screen (selecting interests/clubs) before accessing the main dashboard.
+* `interests` (Array of Strings): Crucial for building the recommendation engine. Stores the event categories the participant enjoys so the "Browse Events" view can sort relevant events higher.
+* `followedOrganizers` (Array of ObjectIds): Allows participants to subscribe to specific clubs, enabling the system to boost those clubs' events in their feed.
+
+### 6.2 Organizer Details
+Each organizer record strictly stores:
+* **Organizer Name** (`organizerName`)
+* **Category** (`category`)
+* **Description** (`description`)
+* **Contact Email** (`contactEmail`)
+* **Email & Password** (Inherited from the base schema for login purposes)
+
+**Additional Attributes & Justifications:**
+* `isActive` (Boolean): Important for administrative control. Allows the Admin to soft-delete or temporarily suspend a rogue organizer without permanently deleting their historical event data from the database.
+* `discordWebhook` (String): A quality-of-life feature allowing organizers to bind a Discord channel to their account, triggering automatic server announcements whenever they publish a new event.
+
 ## Advanced Features Implemented
 
 ### Tier A Features (8 Marks Each)
