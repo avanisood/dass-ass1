@@ -183,7 +183,7 @@ exports.registerForEvent = async (req, res) => {
 
     // Send confirmation email asynchronously in the background
     sendRegistrationConfirmation(
-      req.user.email,
+      populatedRegistration.participantId.email,
       populatedRegistration.eventId,
       populatedRegistration
     ).catch(err => {
