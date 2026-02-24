@@ -30,7 +30,7 @@ import {
  * Allows organizers to create custom registration forms for events
  * Returns array of field objects to parent component
  */
-const FormBuilder = ({ fields = [], onChange }) => {
+const FormBuilder = ({ fields = [], onChange, disabled = false }) => {
   // Local state for form fields
   const [formFields, setFormFields] = useState(fields);
 
@@ -176,6 +176,7 @@ const FormBuilder = ({ fields = [], onChange }) => {
                     value={field.label}
                     onChange={(e) => handleFieldChange(field.id, 'label', e.target.value)}
                     placeholder="Enter question"
+                    disabled={disabled}
                     sx={{
                       '& .MuiOutlinedInput-root': {
                         fontFamily: 'Karla, sans-serif',
@@ -190,6 +191,7 @@ const FormBuilder = ({ fields = [], onChange }) => {
                         value={field.fieldType}
                         label="Field Type"
                         onChange={(e) => handleFieldChange(field.id, 'fieldType', e.target.value)}
+                        disabled={disabled}
                         sx={{
                           fontFamily: 'Karla, sans-serif',
                         }}
@@ -208,6 +210,7 @@ const FormBuilder = ({ fields = [], onChange }) => {
                           checked={field.required}
                           onChange={(e) => handleFieldChange(field.id, 'required', e.target.checked)}
                           size="small"
+                          disabled={disabled}
                           sx={{
                             '&.Mui-checked': {
                               color: '#E8C17C',
@@ -237,6 +240,7 @@ const FormBuilder = ({ fields = [], onChange }) => {
                       value={field.options?.join(', ') || ''}
                       onChange={(e) => handleOptionsChange(field.id, e.target.value)}
                       placeholder="e.g., S, M, L, XL"
+                      disabled={disabled}
                       sx={{
                         '& .MuiOutlinedInput-root': {
                           fontFamily: 'Karla, sans-serif',
@@ -251,7 +255,7 @@ const FormBuilder = ({ fields = [], onChange }) => {
                   <IconButton
                     size="small"
                     onClick={() => handleMoveUp(index)}
-                    disabled={index === 0}
+                    disabled={disabled || index === 0}
                     title="Move Up"
                     sx={{
                       color: '#2C2C2C',
@@ -269,7 +273,7 @@ const FormBuilder = ({ fields = [], onChange }) => {
                   <IconButton
                     size="small"
                     onClick={() => handleMoveDown(index)}
-                    disabled={index === formFields.length - 1}
+                    disabled={disabled || index === formFields.length - 1}
                     title="Move Down"
                     sx={{
                       color: '#2C2C2C',
@@ -288,10 +292,14 @@ const FormBuilder = ({ fields = [], onChange }) => {
                     size="small"
                     onClick={() => handleDeleteField(field.id)}
                     title="Delete Field"
+                    disabled={disabled}
                     sx={{
                       color: '#D32F2F',
                       '&:hover': {
                         backgroundColor: 'rgba(211, 47, 47, 0.1)',
+                      },
+                      '&:disabled': {
+                        opacity: 0.3,
                       },
                     }}
                   >
@@ -309,6 +317,7 @@ const FormBuilder = ({ fields = [], onChange }) => {
           startIcon={<AddIcon />}
           onClick={handleAddField}
           fullWidth
+          disabled={disabled}
           sx={{ mt: 2 }}
         >
           Add Field

@@ -9,28 +9,28 @@ const eventSchema = new mongoose.Schema({
   },
   description: {
     type: String,
-    required: true
+    required: function () { return this.status !== 'draft'; }
   },
   type: {
     type: String,
     enum: ['normal', 'merchandise'],
-    required: true
+    required: function () { return this.status !== 'draft'; }
   },
   eligibility: {
     type: String,
-    required: true
+    required: function () { return this.status !== 'draft'; }
   },
   registrationDeadline: {
     type: Date,
-    required: true
+    required: function () { return this.status !== 'draft'; }
   },
   eventStartDate: {
     type: Date,
-    required: true
+    required: function () { return this.status !== 'draft'; }
   },
   eventEndDate: {
     type: Date,
-    required: true
+    required: function () { return this.status !== 'draft'; }
   },
   registrationLimit: {
     type: Number,

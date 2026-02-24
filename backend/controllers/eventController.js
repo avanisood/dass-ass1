@@ -58,32 +58,41 @@ exports.createEvent = async (req, res) => {
       registrationLimit, registrationFee, tags, customForm, itemDetails
     } = req.body;
 
-    if (!name || !description || !type || !eligibility) {
+    if (!name || !type) {
       return res.status(400).json({
         success: false,
-        message: 'Please provide all required fields: name, description, type, and eligibility'
+        message: 'Please provide at least a name and type to save a draft'
       });
     }
 
-    if (!registrationDeadline || !eventStartDate || !eventEndDate) {
-      return res.status(400).json({
-        success: false,
-        message: 'Please provide all required dates: registrationDeadline, eventStartDate, and eventEndDate'
-      });
-    }
-
-    const regDeadline = new Date(registrationDeadline);
-    const startDate = new Date(eventStartDate);
-    const endDate = new Date(eventEndDate);
-
-    // Only enforce strict date ordering for normal events
-    if (type !== 'merchandise') {
-      if (regDeadline >= startDate) {
-        return res.status(400).json({ success: false, message: 'Registration deadline must be before event start date' });
+    if (req.body.status !== 'draft') {
+      if (!description || !eligibility) {
+        return res.status(400).json({
+          success: false,
+          message: 'Please provide all required fields: name, description, type, and eligibility to publish'
+        });
       }
 
-      if (startDate >= endDate) {
-        return res.status(400).json({ success: false, message: 'Event start date must be before event end date' });
+      if (!registrationDeadline || !eventStartDate || !eventEndDate) {
+        return res.status(400).json({
+          success: false,
+          message: 'Please provide all required dates: registrationDeadline, eventStartDate, and eventEndDate to publish'
+        });
+      }
+
+      const regDeadline = new Date(registrationDeadline);
+      const startDate = new Date(eventStartDate);
+      const endDate = new Date(eventEndDate);
+
+      // Only enforce strict date ordering for normal events
+      if (type !== 'merchandise') {
+        if (regDeadline >= startDate) {
+          return res.status(400).json({ success: false, message: 'Registration deadline must be before event start date' });
+        }
+
+        if (startDate >= endDate) {
+          return res.status(400).json({ success: false, message: 'Event start date must be before event end date' });
+        }
       }
     }
 

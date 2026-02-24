@@ -22,6 +22,7 @@ import {
   HowToReg as AttendedIcon,
 } from '@mui/icons-material';
 import DiscussionForum from '../../components/event/DiscussionForum';
+import FormBuilder from '../../components/organizer/FormBuilder';
 
 const OrganizerEventDetail = () => {
   const { id } = useParams();
@@ -57,6 +58,7 @@ const OrganizerEventDetail = () => {
         eligibility: evt.eligibility,
         registrationLimit: evt.registrationLimit,
         registrationFee: evt.registrationFee,
+        customForm: evt.customForm || [],
       });
     } catch (err) {
       setError('Failed to load event details.');
@@ -91,7 +93,17 @@ const OrganizerEventDetail = () => {
 
   const handleSaveEdit = async () => {
     try {
-      await api.put(`/events/${id}`, editData);
+      // Strip temporary 'id' from custom form fields
+      const processedCustomForm = editData.customForm
+        ? editData.customForm.map(({ id, ...rest }) => rest)
+        : [];
+
+      const payload = {
+        ...editData,
+        customForm: processedCustomForm
+      };
+
+      await api.put(`/events/${id}`, payload);
       showSnackbar('Event updated successfully', 'success');
       setEditMode(false);
       fetchEvent();
@@ -583,6 +595,20 @@ const OrganizerEventDetail = () => {
                 />
               </Grid>
             </Grid>
+            {event?.type === 'normal' && (
+              <Box sx={{ mt: 2 }}>
+                <FormBuilder
+                  fields={editData.customForm || []}
+                  onChange={(fields) => setEditData(prev => ({ ...prev, customForm: fields }))}
+                  disabled={event.registrationCount > 0}
+                />
+                {event.registrationCount > 0 && (
+                  <Typography variant="caption" color="error" sx={{ display: 'block', mt: 1, fontFamily: 'Karla, sans-serif' }}>
+                    Form fields are locked because attendees have already registered.
+                  </Typography>
+                )}
+              </Box>
+            )}
           </Box>
           <Box sx={{ display: 'flex', gap: 2, mt: 3 }}>
             <Button className="window-button" onClick={() => setEditMode(false)} fullWidth>Cancel</Button>

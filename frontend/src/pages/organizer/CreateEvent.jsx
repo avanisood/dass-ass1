@@ -197,14 +197,15 @@ const CreateEvent = () => {
     setError('');
     setSuccess('');
 
-    if (status === 'published' && !validateForm()) {
-      return;
-    }
-
-    // Always validate description
-    if (!formData.description.trim()) {
-      setError('Event description is required');
-      return;
+    if (status === 'draft') {
+      if (!formData.name.trim()) {
+        setError('Event name is required to save a draft');
+        return;
+      }
+    } else if (status === 'published') {
+      if (!validateForm()) {
+        return;
+      }
     }
 
     setLoading(true);
