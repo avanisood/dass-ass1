@@ -16,27 +16,23 @@ const sendEmail = async (to, subject, text, html, attachments = []) => {
     console.log(`[EMAIL] Subject: ${subject}`);
     console.log(`[EMAIL] EMAIL_USER configured: ${!!process.env.EMAIL_USER}`);
     console.log(`[EMAIL] EMAIL_PASS configured: ${!!process.env.EMAIL_PASS}`);
-    
+
     // Validate environment variables
     if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
       throw new Error('EMAIL_USER or EMAIL_PASS not configured in environment variables');
     }
-    
+
     // Create transporter with Gmail SMTP configuration
-    // Added timeout settings for production environments
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
-        user: process.env.EMAIL_USER, // Gmail address from .env
-        pass: process.env.EMAIL_PASS  // Gmail app password from .env
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
       },
-      // Increase timeout for production environments (Render may have slower connections)
-      connectionTimeout: 60000, // 60 seconds
-      greetingTimeout: 30000,   // 30 seconds
-      socketTimeout: 60000,     // 60 seconds
-      // Enable debug for production troubleshooting
-      debug: process.env.NODE_ENV === 'production',
-      logger: process.env.NODE_ENV === 'production'
+      pool: false,           // Don't pool connections — create a fresh conn each time
+      connectionTimeout: 10000, // 10 seconds (fail fast if SMTP unreachable)
+      greetingTimeout: 5000,    // 5 seconds
+      socketTimeout: 15000,     // 15 seconds
     });
 
     // Email options
@@ -55,7 +51,7 @@ const sendEmail = async (to, subject, text, html, attachments = []) => {
     console.log('[EMAIL] ✓ Email sent successfully!');
     console.log('[EMAIL] Message ID:', info.messageId);
     console.log('[EMAIL] Recipient:', to);
-    
+
     return {
       success: true,
       messageId: info.messageId
@@ -66,14 +62,14 @@ const sendEmail = async (to, subject, text, html, attachments = []) => {
     console.error('[EMAIL] Error code:', error.code);
     console.error('[EMAIL] To:', to);
     console.error('[EMAIL] Subject:', subject);
-    
+
     // Provide helpful error messages
     if (error.code === 'EAUTH' || error.responseCode === 535) {
       console.error('[EMAIL] HINT: Authentication failed - Check if using App Password (not regular password)');
     } else if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
       console.error('[EMAIL] HINT: EMAIL_USER or EMAIL_PASS not set in environment variables');
     }
-    
+
     return {
       success: false,
       error: error.message,

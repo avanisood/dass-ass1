@@ -181,33 +181,29 @@ exports.registerForEvent = async (req, res) => {
       .populate('eventId', 'name type eventStartDate eventEndDate registrationFee')
       .populate('participantId', 'firstName lastName email');
 
-    // Send confirmation email asynchronously in the background
-    // Don't wait for email - registration should succeed even if email fails
-    console.log('[REGISTRATION] Attempting to send confirmation email...');
-    sendRegistrationConfirmation(
-      populatedRegistration.participantId.email,
-      populatedRegistration.eventId,
-      populatedRegistration
-    ).then(result => {
-      if (result.success) {
-        console.log('[REGISTRATION] ✓ Confirmation email sent successfully');
-      } else {
-        console.error('[REGISTRATION] ✗ Confirmation email failed:', result.error);
-        // Email failure should not affect registration success
-      }
-    }).catch(err => {
-      console.error('[REGISTRATION] ✗ Background email failed:', err.message);
-      console.error('[REGISTRATION] Error details:', err);
-      // Email failure should not affect registration success
-    });
-
-    // Return registration with success message immediately
-    // Don't wait for email to complete
+    // Return registration with success IMMEDIATELY — don't wait for email at all
     res.status(201).json({
       success: true,
       message: 'Registration successful! Check your email for ticket details.',
       registration: populatedRegistration,
       note: 'If you don\'t receive an email within 5 minutes, please check your spam folder or contact support.'
+    });
+
+    // Send confirmation email after response is flushed (completely non-blocking)
+    setImmediate(() => {
+      sendRegistrationConfirmation(
+        populatedRegistration.participantId.email,
+        populatedRegistration.eventId,
+        populatedRegistration
+      ).then(result => {
+        if (result.success) {
+          console.log('[REGISTRATION] ✓ Confirmation email sent successfully');
+        } else {
+          console.error('[REGISTRATION] ✗ Confirmation email failed:', result.error);
+        }
+      }).catch(err => {
+        console.error('[REGISTRATION] ✗ Background email failed:', err.message);
+      });
     });
 
   } catch (error) {
