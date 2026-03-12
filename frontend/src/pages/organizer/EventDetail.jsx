@@ -122,7 +122,7 @@ const OrganizerEventDetail = () => {
   };
 
   const getStatusColor = (status) => {
-    const map = { draft: '#9E9E9E', published: '#6B9BC3', ongoing: '#E8C17C', completed: '#4CAF50', closed: '#F44336' };
+    const map = { draft: '#9E9E9E', published: '#6B9BC3', ongoing: '#E8C17C', completed: '#4CAF50' };
     return map[status] || '#9E9E9E';
   };
 
@@ -256,11 +256,10 @@ const OrganizerEventDetail = () => {
                     Mark Ongoing
                   </Button>
                   <Button
-                    sx={{ color: '#F44336', borderColor: '#F44336' }}
-                    className="window-button"
-                    onClick={() => handleStatusChange('closed')}
+                    className="window-button window-button-gold"
+                    onClick={() => handleStatusChange('completed')}
                   >
-                    Close Event
+                    Mark Completed
                   </Button>
                 </>
               )}

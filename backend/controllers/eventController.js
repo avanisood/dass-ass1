@@ -165,10 +165,10 @@ exports.getEvents = async (req, res) => {
       const isOwner = req.user && (req.user._id.toString() === organizerId || req.user.id === organizerId);
       const isAdmin = req.user && req.user.role === 'admin';
       if (!isOwner && !isAdmin) {
-        // Non-owners can see published AND ongoing events (ongoing = happening now)
-        query.status = { $in: ['published', 'ongoing'] };
+        // Non-owners can see published, ongoing, and completed events
+        query.status = { $in: ['published', 'ongoing', 'completed'] };
       }
-      // Owners and admins see ALL statuses (draft, published, ongoing, completed, closed)
+      // Owners and admins see ALL statuses (draft, published, ongoing, completed)
     } else {
       // No organizerId filter - only public published events unless admin
       if (!req.user || req.user.role === 'participant') {
@@ -337,7 +337,7 @@ exports.updateEvent = async (req, res) => {
       return res.status(403).json({ success: false, message: 'Unauthorized. You can only edit your own events.' });
     }
 
-    // Cannot edit published/completed/closed events (except via status endpoint)
+    // Cannot edit published/ongoing/completed events (except via status endpoint)
     const editableStatuses = ['draft'];
     if (!editableStatuses.includes(event.status)) {
       return res.status(400).json({
@@ -419,7 +419,7 @@ exports.updateEventStatus = async (req, res) => {
     const { id } = req.params;
     const { status } = req.body;
 
-    const allowedStatuses = ['draft', 'published', 'ongoing', 'completed', 'closed'];
+    const allowedStatuses = ['draft', 'published', 'ongoing', 'completed'];
     if (!status || !allowedStatuses.includes(status)) {
       return res.status(400).json({
         success: false,
@@ -439,10 +439,9 @@ exports.updateEventStatus = async (req, res) => {
     // Valid transitions
     const validTransitions = {
       draft: ['published'],
-      published: ['ongoing', 'closed'],
-      ongoing: ['completed', 'closed'],
-      completed: [],
-      closed: []
+      published: ['ongoing', 'completed'],
+      ongoing: ['completed'],
+      completed: []
     };
 
     if (!validTransitions[event.status].includes(status)) {

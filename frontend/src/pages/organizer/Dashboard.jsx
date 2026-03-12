@@ -129,8 +129,6 @@ const Dashboard = () => {
         return '#E8C17C';
       case 'completed':
         return '#4CAF50';
-      case 'closed':
-        return '#C65D4F';
       default:
         return '#9E9E9E';
     }

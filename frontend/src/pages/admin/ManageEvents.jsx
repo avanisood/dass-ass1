@@ -44,7 +44,6 @@ const ManageEvents = () => {
             published: '#6B9BC3',
             ongoing: '#E8C17C',
             completed: '#4CAF50',
-            closed: '#F44336',
         };
         return map[status] || '#9E9E9E';
     };
@@ -104,7 +103,6 @@ const ManageEvents = () => {
                                 <MenuItem value="published">Published</MenuItem>
                                 <MenuItem value="ongoing">Ongoing</MenuItem>
                                 <MenuItem value="completed">Completed</MenuItem>
-                                <MenuItem value="closed">Closed</MenuItem>
                             </Select>
                         </FormControl>
                     </Box>
