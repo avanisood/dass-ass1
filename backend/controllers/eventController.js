@@ -162,11 +162,13 @@ exports.getEvents = async (req, res) => {
     if (organizerId) {
       query.organizerId = organizerId;
       // If this is the organizer viewing their own events, skip status filter
-      const isOwner = req.user && req.user._id.toString() === organizerId;
+      const isOwner = req.user && (req.user._id.toString() === organizerId || req.user.id === organizerId);
       const isAdmin = req.user && req.user.role === 'admin';
       if (!isOwner && !isAdmin) {
-        query.status = 'published';
+        // Non-owners can see published AND ongoing events (ongoing = happening now)
+        query.status = { $in: ['published', 'ongoing'] };
       }
+      // Owners and admins see ALL statuses (draft, published, ongoing, completed, closed)
     } else {
       // No organizerId filter - only public published events unless admin
       if (!req.user || req.user.role === 'participant') {
@@ -295,9 +297,9 @@ exports.getEventById = async (req, res) => {
     // Validate ObjectId format
     const mongoose = require('mongoose');
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({ 
-        success: false, 
-        message: 'Invalid event ID format' 
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid event ID format'
       });
     }
 
