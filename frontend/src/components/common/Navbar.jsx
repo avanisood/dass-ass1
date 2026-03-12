@@ -80,6 +80,7 @@ const Navbar = () => {
         return [
           { label: 'Dashboard', path: '/admin/dashboard', icon: <DashboardIcon /> },
           { label: 'Manage Organizers', path: '/admin/organizers', icon: <PeopleIcon /> },
+          { label: 'All Events', path: '/admin/events', icon: <EventIcon /> },
           { label: 'Password Resets', path: '/admin/password-requests', icon: <PersonIcon /> }
         ];
 

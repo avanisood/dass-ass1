@@ -103,8 +103,8 @@ const ManageOrganizers = () => {
 
       // Store generated credentials
       setCredentials({
-        email: response.data.organizer.email,
-        password: response.data.password,
+        email: response.data.credentials.email,
+        password: response.data.credentials.password,
         organizerName: response.data.organizer.organizerName
       });
 
