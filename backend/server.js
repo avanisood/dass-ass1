@@ -96,6 +96,7 @@ app.use('/api/admin', require('./routes/admin'));
 app.use('/api/users', require('./routes/users'));
 app.use('/api/password-reset', require('./routes/passwordReset'));
 app.use('/api', require('./routes/messages'));
+app.use('/api', require('./routes/testEmailRoute'));
 
 // Error handling middleware
 app.use((err, req, res, next) => {
